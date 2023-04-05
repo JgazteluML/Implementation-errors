@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="pin_tool.EFR32MG22C224F512IM40" partId="mcu.arm.efr32.mg22.efr32mg22c224f512im40" contextId="com.silabs.sdk.stack.super:4.1.1._1648672567">
+  <mode name="DefaultMode">
+    <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
+    <property object="EUART0" propertyId="ABModule.selectedRequirement" value="eusart%T%SL_IOSTREAM_EUSART_COM%T%sl_iostream_eusart_COM_config.h"/>
+    <property object="EUART0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="EUART0" propertyId="peripheral.name" value="COM"/>
+    <property object="PA00" propertyId="pin.name" value="GPIO1"/>
+    <property object="PA00" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PA04" propertyId="pin.name" value="SPI_CPU_SCLK"/>
+    <property object="PA05" propertyId="pin.name" value="SPI_CPU_MISO"/>
+    <property object="PA06" propertyId="pin.name" value="SPI_CPU_MOSI"/>
+    <property object="PA07" propertyId="pin.name" value="SPI_CPU_CS"/>
+    <property object="PA07" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PB00" propertyId="pin.name" value="RX_USB"/>
+    <property object="PB01" propertyId="pin.name" value="TX_USB"/>
+    <property object="PB02" propertyId="pin.name" value="ON_OFF_SEN"/>
+    <property object="PB02" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PB04" propertyId="pin.name" value="ON_OFF_FPGA"/>
+    <property object="PB04" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PC00" propertyId="pin.name" value="ICE_MOSI"/>
+    <property object="PC00" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PC01" propertyId="pin.name" value="ICE_MISO"/>
+    <property object="PC01" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PC02" propertyId="pin.name" value="ICE_SCK"/>
+    <property object="PC02" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PC07" propertyId="pin.name" value="EN_FPGA_LP"/>
+    <property object="PC07" propertyId="pin.reserve" value="Reserved"/>
+    <property object="PORTIO" propertyId="portio.euart0.enable.rx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.euart0.enable.tx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.euart0.location.rx" value="16"/>
+    <property object="PORTIO" propertyId="portio.euart0.location.tx" value="17"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.clk" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.rx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.tx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.location.clk" value="4"/>
+    <property object="PORTIO" propertyId="portio.usart1.location.rx" value="5"/>
+    <property object="PORTIO" propertyId="portio.usart1.location.tx" value="6"/>
+    <property object="USART1" propertyId="ABModule.selectedRequirement" value="usart%T%SL_SPIDRV_USART_SPI_CPU%T%sl_spidrv_usart_SPI_CPU_config.h"/>
+    <property object="USART1" propertyId="ABPeripheral.included" value="true"/>
+    <property object="USART1" propertyId="peripheral.name" value="SPI-CPU"/>
+  </mode>
+  <modeTransition>
+    <property object="RESET &#x2192; DefaultMode" propertyId="modeTransition.source" value="RESET"/>
+    <property object="RESET &#x2192; DefaultMode" propertyId="modeTransition.target" value="DefaultMode"/>
+  </modeTransition>
+</device:XMLDevice>
