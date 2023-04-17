@@ -72,6 +72,7 @@ RM := rm -rf
 -include red/edge-impulse-sdk/CMSIS/DSP/Source/BasicMathFunctions/subdir.mk
 -include gecko_sdk_4.1.1/util/third_party/printf/src/subdir.mk
 -include gecko_sdk_4.1.1/util/third_party/printf/subdir.mk
+-include gecko_sdk_4.1.1/platform/service/udelay/src/subdir.mk
 -include gecko_sdk_4.1.1/platform/service/system/src/subdir.mk
 -include gecko_sdk_4.1.1/platform/service/sleeptimer/src/subdir.mk
 -include gecko_sdk_4.1.1/platform/service/iostream/src/subdir.mk

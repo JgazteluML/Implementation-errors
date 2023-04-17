@@ -195,7 +195,8 @@ app.o: ../app.cpp \
  C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400_defs.h \
  C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400.h \
  C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400_defs.h \
- ../run_model_fifo.h
+ ../run_model_fifo.h \
+ C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\gecko_sdk_4.1.1\platform\service\udelay\inc/sl_udelay.h
 C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\gecko_sdk_4.1.1\platform\common\toolchain\inc/sl_gcc_preinclude.h:
 C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\autogen/sl_spidrv_instances.h:
 C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\gecko_sdk_4.1.1\platform\emdrv\spidrv\inc/spidrv.h:
@@ -393,3 +394,4 @@ C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400_defs.h:
 C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400.h:
 C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\bma/bma400_defs.h:
 ../run_model_fifo.h:
+C:\Users\jgaztelu\SimplicityStudio\v5_workspace\BMA400_FIFO\gecko_sdk_4.1.1\platform\service\udelay\inc/sl_udelay.h:

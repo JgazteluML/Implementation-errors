@@ -41,6 +41,7 @@ gecko_sdk_4.1.1/platform/service/device_init/src \
 gecko_sdk_4.1.1/platform/service/iostream/src \
 gecko_sdk_4.1.1/platform/service/sleeptimer/src \
 gecko_sdk_4.1.1/platform/service/system/src \
+gecko_sdk_4.1.1/platform/service/udelay/src \
 gecko_sdk_4.1.1/util/third_party/printf \
 gecko_sdk_4.1.1/util/third_party/printf/src \
 red/edge-impulse-sdk/CMSIS/DSP/Source/BasicMathFunctions \

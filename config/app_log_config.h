@@ -83,7 +83,7 @@
 // <APP_LOG_NEW_LINE_R=> "\r"
 // <APP_LOG_NEW_LINE_RN=> "\r\n"
 // <i> Default: APP_LOG_NEW_LINE_N
-#define APP_LOG_NEW_LINE                        APP_LOG_NEW_LINE_N
+#define APP_LOG_NEW_LINE                        APP_LOG_NEW_LINE_RN
 
 #define APP_LOG_AUTO_NL                         0
 

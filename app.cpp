@@ -35,7 +35,7 @@
 
 #include "run_model_fifo.h"
 
-int8_t i8_retval=0;
+//int8_t i8_retval=0;
 
 
 

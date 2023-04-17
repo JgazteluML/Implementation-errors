@@ -18,6 +18,7 @@
 #include "bma400.h"
 
 #include "sl_sleeptimer.h"
+#include "sl_udelay.h"
 
 void bma400_pin_config(void);
 
@@ -27,7 +28,7 @@ void runInference(void);
 
 int8_t init_bma_handle(void);
 
-
+int8_t i8_retval=0;
 /***************************************************************************//**
  * Defines & Macros.
  ******************************************************************************/
@@ -55,16 +56,21 @@ int8_t init_bma_handle(void);
 /***************************************************************************//**
  * Edge Impulse
  ******************************************************************************/
-
+/**
+ * @brief      Gets the signal data.
+ *
+ * @param[in]  offset   The offset
+ * @param[in]  length   The length
+ * @param      out_ptr  The out pointer
+ *
+ * @return     The signal data.
+ */
 static int get_signal_data(size_t offset, size_t length, float *out_ptr);
 
 uint16_t count=0;
 float arrCount=0,izqCount=0,estCount=0,uncertain=0;
 uint8_t scoreCount=0;
 float arrScore=0,estScore=0,izqScore=0,uncScore=0;
-
-//ei_impulse_t impulso;
-//EI_IMPULSE_ERROR impulse_err;
 
 /***************************************************************************//**
  * Typedefs.
@@ -89,8 +95,6 @@ static int8_t SPI_WRITE(uint8_t reg_addr, const uint8_t *reg_data, uint32_t leng
                         void *intf_ptr);
 
 static void DELAY_US(uint32_t period, void *intf_ptr);
-
-
 
 /***************************************************************************//**
  * Static Functions.
@@ -228,17 +232,6 @@ static void DELAY_US(uint32_t period, void *intf_ptr)
 //}
 
 /**
- * @brief      Gets the signal data.
- *
- * @param[in]  offset   The offset
- * @param[in]  length   The length
- * @param      out_ptr  The out pointer
- *
- * @return     The signal data.
- */
-
-
-/**
  * @brief      Runs the inference
  */
 void runInference(void){
@@ -248,40 +241,40 @@ void runInference(void){
   EI_IMPULSE_ERROR res;
   uint8_t prevVal=0;
   int8_t indice=0;
+  int tiempo=0;
 
   //  size_t buf_len = sizeof(bma400_data) / sizeof(bma400_data[0]);
   // Assign callback function to fill buffer used for preprocessing/inference
   signal.total_length = EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE;
   signal.get_data = &get_signal_data;
 
-
-
   GPIO_PinOutClear(ICE_MOSI_PORT, ICE_MOSI_PIN);
   sl_sleeptimer_delay_millisecond(0.1);
 
   GPIO_PinOutSet(ICE_MOSI_PORT, ICE_MOSI_PIN);
 
-
-
   // Perform DSP pre-processing and inference
   res = run_classifier(&signal, &result, false);
 
-
-
-
   GPIO_PinOutClear(ICE_MOSI_PORT, ICE_MOSI_PIN);
 
-
-  app_log("Timing: DSP %d ms, inf %d ms, anom %d ms\r\n",result.timing.dsp,result.timing.classification,result.timing.anomaly);
-//  app_log("Predictions:\r\n");
-//  for (uint8_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) {
-//      app_log("  %s: %.5f\r\n", ei_classifier_inferencing_categories[i], result.classification[i].value);
-//
-//  }
+  //  app_log("Predictions:\r\n");
+  //  for (uint8_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) {
+  //      app_log("  %s: %.5f\r\n", ei_classifier_inferencing_categories[i], result.classification[i].value);
+  //
+  //  }
 
 #if EI_CLASSIFIER_HAS_ANOMALY == 1
-//  printf("Anomaly prediction: %.3f\r\n", result.anomaly);
+  tiempo=result.timing.dsp+result.timing.classification+result.timing.anomaly;
+  app_log("Tiempo total %dms \r\n",tiempo);
+//  app_log("DSP %dms, inf %dms, anom %dms\r\n",result.timing.dsp,result.timing.classification,result.timing.anomaly);
+//  sl_udelay_wait(40);
+#else
+  tiempo=result.timing.dsp+result.timing.classification;
+  app_log("Tiempo total %dms    \r\n",tiempo);
+//  app_log("DSP %dms, inf %dms\r\n",result.timing.dsp,result.timing.classification);
 #endif
+
   if((result.classification[0].value>result.classification[1].value) | (result.classification[0].value>result.classification[2].value)){
       arrCount++;
   }
@@ -296,26 +289,22 @@ void runInference(void){
   }
 
   prevVal=0;
-//  res=EI_IMPULSE_OK;
   scoreCount++;
 
-      if(scoreCount==40){
-          //arr=true;
-          arrScore=100*arrCount/scoreCount;
-          estScore=100*estCount/scoreCount;
-          izqScore=100*izqCount/scoreCount;
-          uncScore=100*uncertain/scoreCount;
-          app_log("%s: %1.3f|%s: %1.3f|%s: %1.3f|uncertain: %1.3f\r\n", ei_classifier_inferencing_categories[0],arrScore,ei_classifier_inferencing_categories[1],estScore,ei_classifier_inferencing_categories[2],izqScore,uncScore);
-          scoreCount=0;
-          arrCount=0;
-          estCount=0;
-          izqCount=0;
-          uncertain=0;
+  if(scoreCount==40){
+      arrScore=100*arrCount/scoreCount;
+      estScore=100*estCount/scoreCount;
+      izqScore=100*izqCount/scoreCount;
+      uncScore=100*uncertain/scoreCount;
+      app_log("%s: %1.3f|%s: %1.3f|%s: %1.3f|uncertain: %1.3f\r\n", ei_classifier_inferencing_categories[0],arrScore,ei_classifier_inferencing_categories[1],estScore,ei_classifier_inferencing_categories[2],izqScore,uncScore);
+      scoreCount=0;
+      arrCount=0;
+      estCount=0;
+      izqCount=0;
+      uncertain=0;
 
-      }
+  }
 
-      GPIO_PinOutSet(ICE_MISO_PORT, ICE_MISO_PIN);
-      EMU_EnterEM2(true);//EMU_EnterEM1 //EMpeta
 }
 
 
@@ -348,7 +337,6 @@ int8_t init_bma_handle(void){
   /* END SPI ONLY CONFIG */
 
   /* SPI Interface Specific config */
-
   vs_s_bma400_spi_if.spi_port = USART1;
   vs_s_bma400_spi_if.cs_gpio.port = SPI_CPU_CS_PORT;
   vs_s_bma400_spi_if.cs_gpio.pin = SPI_CPU_CS_PIN;
@@ -362,15 +350,12 @@ int8_t init_bma_handle(void){
   vg_bma400_handle.delay_us = DELAY_US;
   /* End General config */
 
-
   /* INIT ACCELEROMETER DRIVER */
   i8_retval += bma400_soft_reset(&vg_bma400_handle);
-
   i8_retval += bma400_init(&vg_bma400_handle);
 
   /* Select the type of configuration to be modified */
   vg_bma400_conf.type = BMA400_ACCEL;
-
 
   i8_retval += bma400_get_sensor_conf(&vg_bma400_conf, 1, &vg_bma400_handle);
 
@@ -379,7 +364,6 @@ int8_t init_bma_handle(void){
   vg_bma400_conf.param.accel.data_src = BMA400_DATA_SRC_ACCEL_FILT_1;
   /* Set the desired configurations to the sensor */
   i8_retval += bma400_set_sensor_conf(&vg_bma400_conf, 1, &vg_bma400_handle);
-
 
   i8_retval += bma400_set_power_mode(BMA400_MODE_NORMAL, &vg_bma400_handle);
 
@@ -394,7 +378,6 @@ int8_t init_bma_handle(void){
 
   i8_retval+=bma400_set_device_conf(&vg_bma400_fifo_conf, 1, &vg_bma400_handle);
 
-
   vg_bma400_fifo_frame.data = fifo_buff;
   vg_bma400_fifo_frame.length = FIFO_SIZE_FULL;
 
@@ -406,7 +389,7 @@ int8_t init_bma_handle(void){
 }
 
 static int get_signal_data(size_t offset, size_t length, float *out_ptr) {
- for (uint16_t index = 0; index < accel_frames_req; index++)
+  for (uint16_t index = 0; index < accel_frames_req; index++)
     {
       out_ptr[count+0]=vg_bma400_data[index].x;
       out_ptr[count+1]=vg_bma400_data[index].y;
@@ -418,90 +401,77 @@ static int get_signal_data(size_t offset, size_t length, float *out_ptr) {
   return EIDSP_OK;
 }
 
-
-
-
-
-
 void bma400_pin_config(void){
   app_log("red implementada: %s\r\n",EI_CLASSIFIER_PROJECT_NAME);
-    int8_t i8_retval;
-    uint16_t u16_int_status;
+  int8_t i8_retval;
+  uint16_t u16_int_status;
 
-    GPIO_PinModeSet(SPI_CPU_CS_PORT, SPI_CPU_CS_PIN, gpioModePushPull, 1);
-    GPIO_PinModeSet(ON_OFF_FPGA_PORT, ON_OFF_FPGA_PIN, gpioModePushPull, 1);
-    GPIO_PinModeSet(ICE_MOSI_PORT, ICE_MOSI_PIN, gpioModePushPull, 0);//gpioModeInputPull gpioModePushPull
-    GPIO_PinModeSet(ICE_MISO_PORT, ICE_MISO_PIN, gpioModePushPull, 0);
-    GPIO_PinModeSet(GPIO1_PORT, GPIO1_PIN, gpioModeInput, 1);
+  GPIO_PinModeSet(SPI_CPU_CS_PORT, SPI_CPU_CS_PIN, gpioModePushPull, 1);
+  GPIO_PinModeSet(ON_OFF_FPGA_PORT, ON_OFF_FPGA_PIN, gpioModePushPull, 1);
+  GPIO_PinModeSet(ICE_MOSI_PORT, ICE_MOSI_PIN, gpioModePushPull, 0);//gpioModeInputPull gpioModePushPull
+  GPIO_PinModeSet(ICE_MISO_PORT, ICE_MISO_PIN, gpioModePushPull, 0);
+  GPIO_PinModeSet(GPIO1_PORT, GPIO1_PIN, gpioModeInput, 1);
 
-  //  GPIO->IF_CLR |= _GPIO_IF_MASK;
-  //
-  //  GPIO->EXTIRISE_SET
+  GPIO_IntConfig(GPIO1_PORT,GPIO1_PIN,1,0,1);
 
-    GPIO_IntConfig(GPIO1_PORT,GPIO1_PIN,1,0,1);
-
-    NVIC_ClearPendingIRQ(GPIO_ODD_IRQn);
-    NVIC_EnableIRQ(GPIO_ODD_IRQn );//+ (GPIO1_PIN_NUMBER / 2)
+  NVIC_ClearPendingIRQ(GPIO_ODD_IRQn);
+  NVIC_EnableIRQ(GPIO_ODD_IRQn );//+ (GPIO1_PIN_NUMBER / 2)
 }
 
 
-void inference_loop(int8_t i8_retval){
-  while (i8_retval == BMA400_OK)
-      {
-        i8_retval = bma400_get_interrupt_status(&u16_int_status, &vg_bma400_handle);
-        if (i8_retval != BMA400_OK)
-          { break; }
+void inference_loop(int8_t i8_ret_val){
+  while (i8_ret_val == BMA400_OK)
+    {
+      i8_ret_val = bma400_get_interrupt_status(&u16_int_status, &vg_bma400_handle);
+      if (i8_ret_val != BMA400_OK)
+        { break; }
 
-        if (u16_int_status & BMA400_ASSERTED_FIFO_WM_INT)// BMA400_ASSERTED_DRDY_INT  BMA400_ASSERTED_FIFO_FULL_INT
-          {
-            GPIO_PinOutSet(ICE_MOSI_PORT, ICE_MOSI_PIN);
+      if (u16_int_status & BMA400_ASSERTED_FIFO_WM_INT)// BMA400_ASSERTED_DRDY_INT  BMA400_ASSERTED_FIFO_FULL_INT
+        {
+          GPIO_PinOutSet(ICE_MOSI_PORT, ICE_MOSI_PIN);
 
-            bma400_get_fifo_data(&vg_bma400_fifo_frame,&vg_bma400_handle);
-            accel_frames_req = FIFO_ACCEL_FRAME_COUNT;
-            bma400_extract_accel(&vg_bma400_fifo_frame, vg_bma400_data, &accel_frames_req, &vg_bma400_handle);
+          bma400_get_fifo_data(&vg_bma400_fifo_frame,&vg_bma400_handle);
+          accel_frames_req = FIFO_ACCEL_FRAME_COUNT;
+          bma400_extract_accel(&vg_bma400_fifo_frame, vg_bma400_data, &accel_frames_req, &vg_bma400_handle);
 
-            runInference();
-  //          EMU_EnterEM2(true);
-          }
+          runInference();
 
-      }
+          GPIO_PinOutSet(ICE_MISO_PORT, ICE_MISO_PIN);
+          EMU_EnterEM2(true);//EMU_EnterEM1 //EMpeta
 
-    app_log("\r\nBMA400 OP Error\r\n");
+        }
+    }
 
-    while(1){}
+  app_log("\r\nBMA400 OP Error\r\n");
+
+  while(1){}
 }
 
 
-void GPIO_EVEN_IRQHandler(void)
+void GPIO_EVEN_IRQHandler(void)             //Hay que comentar/borrar la definición de esta función del handler en gpiointerrupt.c
 {
   if (GPIO_IntGet() & (1 << GPIO1_PIN)) {
-    // Código que se ejecutará en la interrupción de flanco de subida en GPIO1
-//      CORE_EXIT_CRITICAL();
-    // Limpiar la flag de interrupción de GPIO1
-    GPIO_IntClear(1 << GPIO1_PIN);
+      // Código que se ejecutará en la interrupción de flanco de subida en GPIO1
+      // Limpiar la flag de interrupción de GPIO1
+      GPIO_IntClear(1 << GPIO1_PIN);
 
-
-
-    GPIO_PinOutClear(ICE_MISO_PORT, ICE_MISO_PIN);
-    GPIO_PinOutSet(ICE_MOSI_PORT, ICE_MOSI_PIN);
-    GPIO_PinOutClear(ICE_MOSI_PORT, ICE_MOSI_PIN);
-    app_log("\r\nInterrupción EVEN detectada -> OK\r\n");
-//    sl_sleeptimer_delay_millisecond(5);
+      GPIO_PinOutClear(ICE_MISO_PORT, ICE_MISO_PIN);
+      GPIO_PinOutSet(ICE_MOSI_PORT, ICE_MOSI_PIN);
+      sl_udelay_wait(1);
+      GPIO_PinOutClear(ICE_MOSI_PORT, ICE_MOSI_PIN);
+      //    app_log("\r\nInterrupción EVEN detectada -> OK\r\n");
   }
 }
 
-void GPIO_ODD_IRQHandler(void)
+void GPIO_ODD_IRQHandler(void)             //Hay que comentar/borrar la definición de esta función del handler en gpiointerrupt.c
 {
-//  if (GPIO_IntGet() & (1 << ICE_MISO_PIN)) {
-  if (GPIO->IF & (1 << ICE_MISO_PIN)) {
-    // Código que se ejecutará en la interrupción de flanco de subida en GPIO1
-//      CORE_EXIT_CRITICAL();
-    // Limpiar la flag de interrupción de GPIO1
-//    GPIO_IntClear(1 << ICE_MISO_PIN);
-      GPIO->IF_CLR = (1 << ICE_MISO_PIN);
+  if (GPIO_IntGet() & (1 << ICE_MISO_PIN)) {
+      // Código que se ejecutará en la interrupción de flanco de subida en GPIO1
 
-    app_log("\r\nInterrupción ODD detectada -> OK\r\n");
-//    sl_sleeptimer_delay_millisecond(5);
+      // Limpiar la flag de interrupción de GPIO1
+      GPIO_IntClear(1 << ICE_MISO_PIN);
+
+      app_log("\r\nInterrupción ODD detectada -> OK\r\n");
   }
 }
 

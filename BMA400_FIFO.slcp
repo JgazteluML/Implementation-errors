@@ -37,6 +37,7 @@ component:
 - {id: iostream_stdlib_config}
 - instance: [COM]
   id: iostream_eusart
+- {id: udelay}
 define:
 - {name: DEBUG_EFM}
 ui_hints: {}
