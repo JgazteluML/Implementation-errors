@@ -27,7 +27,7 @@ EI_IMPULSE_ERROR run_kmeans_anomaly(
     void *config_ptr,
     bool debug);
 
-EI_IMPULSE_ERROR run_gmm_anomaly(
+extern EI_IMPULSE_ERROR run_gmm_anomaly(
     const ei_impulse_t *impulse,
     ei::matrix_t *fmatrix,
     ei_impulse_result_t *result,

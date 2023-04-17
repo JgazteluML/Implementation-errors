@@ -21,21 +21,21 @@
 #include "em_emu.h"
 #include "em_core.h"
 
-#include "app_log.h"
-#include "pin_config.h"
+//#include "app_log.h"
+//#include "pin_config.h"
 
-#include "edge-impulse-sdk/classifier/ei_run_classifier.h"
-#include "edge-impulse-sdk/dsp/numpy.hpp"
+//#include "edge-impulse-sdk/classifier/ei_run_classifier.h"
+//#include "edge-impulse-sdk/dsp/numpy.hpp"
 
-#include "bma400_defs.h"
-#include "bma400.h"
+//#include "bma400_defs.h"
+//#include "bma400.h"
 //#include "bma400.c"
 
-#include "sl_sleeptimer.h"
+//#include "sl_sleeptimer.h"
 
 #include "run_model_fifo.h"
 
-//int8_t i8_retval=0;
+int8_t i8_retval=0;
 
 
 
